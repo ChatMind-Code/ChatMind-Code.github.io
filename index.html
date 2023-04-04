@@ -3,128 +3,214 @@
   <head>
     <title>获取手机号码和验证码</title>
     <style>
-      /* 调整页面布局 */
+      /* 样式重置 */
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       }
 
-      body {
-        font-family: Arial, Helvetica, sans-serif;
-        padding: 20px;
+      /* 页面主体部分样式 */
+      main {
+        max-width: 80%;
+        margin: 0 auto;
+        padding: 48px 24px;
+        background-color: #fff;
+        box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.16);
+        border-radius: 8px;
+      }
+
+      h1 {
+        font-size: 2em;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 32px;
+      }
+
+      .content {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      form {
+        margin: 0 12px;
+        padding: 48px 32px;
+        background-color: #f2f2f2;
+        box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.16);
+        border-radius: 8px;
+        width: 400px;
+        min-height: 300px;
+      }
+
+      fieldset {
+        margin-bottom: 32px;
+        padding: 0;
+        border: none;
+      }
+
+      .form-group {
+        margin-bottom: 24px;
+      }
+
+      label {
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        border-radius: 4px;
+        border: none;
+        font-size: 1em;
       }
 
       button {
-        width: 150px;
-        height: 40px;
+        width: 100%;
+        height: 48px;
+        margin: 0;
+        margin-top: 16px;
+        padding: 0;
         border: none;
         border-radius: 4px;
         background-color: #4CAF50;
         color: #fff;
-        font-size: 16px;
+        font-size: 1.1em;
         cursor: pointer;
-        margin: 10px;
       }
 
       button:disabled {
         background-color: #ddd;
+        color: #888;
         cursor: not-allowed;
       }
 
-      div {
-        margin: 10px;
+      .result {
+        margin: 0 12px;
+        padding: 48px 32px;
+        background-color: #f2f2f2;
+        box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.16);
+        border-radius: 8px;
+        width: 400px;
+        min-height: 300px;
       }
 
-      span {
+      .result span {
+        font-size: 1.2em;
         font-weight: bold;
-        margin-right: 5px;
+        display: block;
+        margin-bottom: 8px;
       }
 
-      #phone-number, #verification-code {
-        border: 1px solid #ddd;
-        padding: 5px;
-        margin-left: 5px;
+      .result p {
+        margin-bottom: 8px;
       }
 
-      /* 调整页面颜色 */
-      body {
-        background-color: #f7f7f7;
-      }
+      /* 响应式布局 */
+      @media (max-width: 768px) {
+        main {
+          max-width: 100%;
+          padding: 32px 16px;
+        }
 
-      div, button {
-        background-color: #fff;
+        .content {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        form {
+          width: 100%;
+          max-width: 500px;
+        }
+
+        .result {
+          width: 100%;
+          max-width: 500px;
+          margin-top: 32px;
+        }
       }
     </style>
   </head>
   <body>
-    <!-- 获取手机号码按钮 -->
-    <button id="get-number-button">获取手机号码</button>
-
-    <!-- 显示获取到的手机号码 -->
-    <div>
-      <span>手机号码：</span>
-      <span id="phone-number"></span>
-    </div>
-
-    <!-- 获取验证码按钮 -->
-    <button id="get-code-button" disabled>获取验证码</button>
-
-    <!-- 显示获取到的验证码 -->
-    <div>
-      <span>验证码：</span>
-      <span id="verification-code"></span>
-    </div>
-
-    <!-- 引入 JavaScript 代码 -->
-    <script type="text/javascript">
-      // 获取相关 DOM 元素
+    <main>
+      <h1>获取手机号码和验证码</h1>
+      <div class="content">
+        <form>
+          <fieldset>
+            <legend>获取手机号码</legend>
+            <div class="form-group">
+              <label for="phone-number">手机号码：</label>
+              <input type="text" id="phone-number" disabled />
+            </div>
+            <button id="get-number-button">获取手机号码</button>
+          </fieldset>
+          <fieldset>
+            <legend>获取验证码</legend>
+            <div class="form-group">
+              <label for="verification-code">验证码：</label>
+              <input type="text" id="verification-code" disabled />
+            </div>
+            <button id="get-code-button" disabled>获取验证码</button>
+          </fieldset>
+        </form>
+        <div class="result">
+          <span>获取结果</span>
+          <p>手机号码： <span id="phone-number-result"></span></p>
+          <p>验证码： <span id="verification-code-result"></span></p>
+        </div>
+      </div>
+    </main>
+    <script>
+      // 选取 DOM 元素
       let numberButton = document.getElementById("get-number-button");
       let codeButton = document.getElementById("get-code-button");
-      let phoneNumberElement = document.getElementById("phone-number");
-      let verificationCodeElement = document.getElementById("verification-code");
+      let phoneNumberInput = document.getElementById("phone-number");
+      let verificationCodeInput = document.getElementById("verification-code");
+      let phoneNumberResult = document.getElementById("phone-number-result");
+      let verificationCodeResult = document.getElementById("verification-code-result");
       let phoneNumber = null;
 
-      // 监听获取手机号码按钮的点击事件
+      // 绑定事件
       numberButton.addEventListener("click", function() {
-        // 发送请求到后端获取手机号码
+        // 向后端请求获取手机号码
         let xhr = new XMLHttpRequest();
         xhr.open("GET", "/get_phone_number");
-
         xhr.onload = function() {
           if (xhr.status === 200) {
-            // 获取手机号码成功，显示在页面中
+            // 成功获取手机号码，更新页面上的输入框
             let response = JSON.parse(xhr.responseText);
             phoneNumber = response.phone_number;
-            phoneNumberElement.textContent = phoneNumber;
+            phoneNumberInput.value = phoneNumber;
             codeButton.disabled = false;
           } else {
-            // 获取手机号码失败，显示错误信息
-            alert("获取手机号码失败，请稍后重试");
+            // 获取手机号码失败，提示错误
+            alert("获取手机号码失败，请重新尝试！");
           }
         };
-
         xhr.send();
       });
 
-      // 监听获取验证码按钮的点击事件
       codeButton.addEventListener("click", function() {
-        // 发送请求到后端获取验证码
+        // 向后端请求获取验证码
         let xhr = new XMLHttpRequest();
         xhr.open("GET", "/get_verification_code?phone_number=" + phoneNumber);
-
         xhr.onload = function() {
           if (xhr.status === 200) {
-            // 获取验证码成功，显示在页面中
+            // 成功获取验证码，更新页面上的输入框
             let response = JSON.parse(xhr.responseText);
             let verificationCode = response.verification_code;
-            verificationCodeElement.textContent = verificationCode;
+            verificationCodeInput.value = verificationCode;
+            phoneNumberResult.innerText = phoneNumber;
+            verificationCodeResult.innerText = verificationCode;
           } else {
-            // 获取验证码失败，显示错误信息
-            alert("获取验证码失败，请稍后重试");
+            // 获取验证码失败，提示错误
+            alert("获取验证码失败，请重新尝试！");
           }
         };
-
         xhr.send();
       });
     </script>
